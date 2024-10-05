@@ -30,23 +30,21 @@
             gap: 20px;
         }
         @media (max-width: 600px) {
-    .game-container {
-        flex-direction: column;
-    }
     .special-chars {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        order: 2; /* Places the special characters after the word */
-        margin-top: 20px;
+        display: flex;
+        flex-wrap: nowrap; /* Prevents wrapping to a new row */
+        justify-content: center; /* Aligns the buttons in the center */
+        order: 2; /* Ensure special characters are after the word */
+        gap: 5px; /* Adds space between buttons */
+        overflow-x: auto; /* Allows horizontal scrolling if needed */
     }
     .special-char-btn {
-        flex: 1 1 50px; /* Makes buttons fit in a row, but they can shrink */
-        max-width: 60px; /* Limits the maximum width of each button */
-        margin: 5px;
+        flex: 0 0 auto; /* Prevents shrinking, ensures buttons stay their width */
+        width: 50px; /* Fixes the button width */
+        margin: 0 5px; /* Adds small margins to the sides */
     }
     .word-container {
-        order: 1; /* Keeps the word container above the special characters */
+        order: 1; /* Keeps word container above special characters */
     }
 }
         .special-chars {
