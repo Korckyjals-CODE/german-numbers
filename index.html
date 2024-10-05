@@ -191,33 +191,37 @@
         });
 
         function handleKey(key) {
-            if (!currentWord || currentPosition >= currentWord.length || processingKey) return;
-            
-            processingKey = true;
-            const letters = document.querySelectorAll('.letter');
-            
-            if (key === currentWord[currentPosition].toLowerCase()) {
-                letters[currentPosition].textContent = currentWord[currentPosition];
-                letters[currentPosition].style.color = '#22c55e';
-                currentPosition++;
-                
-                if (currentPosition === currentWord.length) {
-                    document.querySelector('.success').textContent = '✓';
-                    setTimeout(selectNewNumber, 1500);
-                }
-            } else {
-                letters[currentPosition].textContent = '❌';
-                letters[currentPosition].style.color = '#ef4444';
-                setTimeout(() => {
-                    letters[currentPosition].textContent = '_';
-                    letters[currentPosition].style.color = 'black';
-                }, 500);
-            }
-            
-            setTimeout(() => {
-                processingKey = false;
-            }, 50);
+    if (!currentWord || currentPosition >= currentWord.length || processingKey) return;
+
+    processingKey = true;
+    const letters = document.querySelectorAll('.letter');
+
+    // Only process if the key is within the expected range of characters
+    if (key === currentWord[currentPosition].toLowerCase()) {
+        letters[currentPosition].textContent = currentWord[currentPosition];
+        letters[currentPosition].style.color = '#22c55e'; // Green for correct
+        currentPosition++;
+
+        // Check if the word is complete
+        if (currentPosition === currentWord.length) {
+            document.querySelector('.success').textContent = '✓';
+            setTimeout(selectNewNumber, 1500); // Show success and load next number
         }
+    } else {
+        // Mark the current letter position with a temporary error
+        letters[currentPosition].textContent = '❌';
+        letters[currentPosition].style.color = '#ef4444'; // Red for error
+        setTimeout(() => {
+            letters[currentPosition].textContent = '_'; // Reset after showing the error
+            letters[currentPosition].style.color = 'black';
+        }, 500);
+    }
+
+    // Reset the key processing flag after a slight delay to avoid false multiple inputs
+    setTimeout(() => {
+        processingKey = false;
+    }, 100); // Increased time to ensure processing completes
+}
 
         function handleSpecialChar(char) {
             if (!currentWord) return;
