@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Learn German Numbers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
@@ -9,6 +10,7 @@
             margin: 20px auto;
             text-align: center;
             background-color: #f0f9ff;
+            padding: 10px;
         }
         .game-container {
             background-color: white;
@@ -18,6 +20,15 @@
             display: flex;
             gap: 20px;
         }
+        @media (max-width: 600px) {
+            .game-container {
+                flex-direction: column;
+            }
+            .special-chars {
+                flex-direction: row !important;
+                justify-content: center;
+            }
+        }
         .special-chars {
             display: flex;
             flex-direction: column;
@@ -25,7 +36,6 @@
             padding: 20px;
             background-color: #f8fafc;
             border-radius: 10px;
-            min-width: 80px;
         }
         .special-char-btn {
             background-color: #e0e7ff;
@@ -35,6 +45,7 @@
             font-size: 24px;
             cursor: pointer;
             transition: all 0.2s;
+            min-width: 50px;
         }
         .special-char-btn:hover {
             background-color: #818cf8;
@@ -82,6 +93,25 @@
         .error {
             color: #ef4444;
         }
+        .mobile-input {
+            opacity: 0;
+            position: fixed;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+        }
+        .keyboard-hint {
+            background-color: #e0e7ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+        @media (max-width: 600px) {
+            .keyboard-hint {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -95,12 +125,14 @@
         <div class="game-area">
             <h1>Learn German Numbers!</h1>
             <p>Type the letters or use the special character buttons to spell the number in German</p>
+            <div class="keyboard-hint">Tap anywhere to open keyboard</div>
             <div class="number"></div>
             <div class="word-container"></div>
             <button class="new-number-btn" onclick="selectNewNumber()">New Number</button>
             <div class="success"></div>
         </div>
     </div>
+    <input type="text" class="mobile-input" autocomplete="off" />
 
     <script>
         const germanNumbers = {
@@ -115,65 +147,23 @@
         let currentNumber;
         let currentWord;
         let currentPosition;
+        const mobileInput = document.querySelector('.mobile-input');
 
-        function getGermanNumber(num) {
-            if (num <= 20) return germanNumbers[num];
-            if (num % 10 === 0) return germanNumbers[num];
-            const ones = num % 10;
-            const tens = Math.floor(num / 10) * 10;
-            return germanNumbers[ones] + 'und' + germanNumbers[tens];
-        }
+        // Make the whole game area focusable for mobile
+        document.querySelector('.game-area').addEventListener('click', () => {
+            mobileInput.focus();
+        });
 
-        function handleSpecialChar(char) {
+        // Handle mobile input
+        mobileInput.addEventListener('input', (event) => {
+            const key = event.target.value.toLowerCase();
+            handleKey(key);
+            event.target.value = ''; // Clear the input for next letter
+        });
+
+        function handleKey(key) {
             if (!currentWord) return;
             
-            const letters = document.querySelectorAll('.letter');
-            
-            if (currentPosition < currentWord.length) {
-                if (char === currentWord[currentPosition]) {
-                    letters[currentPosition].textContent = currentWord[currentPosition];
-                    letters[currentPosition].style.color = '#22c55e';
-                    currentPosition++;
-                    
-                    if (currentPosition === currentWord.length) {
-                        document.querySelector('.success').textContent = '✓';
-                        setTimeout(selectNewNumber, 1500);
-                    }
-                } else {
-                    letters[currentPosition].textContent = '❌';
-                    letters[currentPosition].style.color = '#ef4444';
-                    setTimeout(() => {
-                        letters[currentPosition].textContent = '_';
-                        letters[currentPosition].style.color = 'black';
-                    }, 500);
-                }
-            }
-        }
-
-        function selectNewNumber() {
-            document.querySelector('.success').textContent = '';
-            currentNumber = Math.floor(Math.random() * 100) + 1;
-            currentWord = getGermanNumber(currentNumber);
-            currentPosition = 0;
-            
-            const numberElement = document.querySelector('.number');
-            numberElement.textContent = currentNumber;
-            
-            const wordContainer = document.querySelector('.word-container');
-            wordContainer.innerHTML = '';
-            
-            for (let i = 0; i < currentWord.length; i++) {
-                const letter = document.createElement('span');
-                letter.classList.add('letter');
-                letter.textContent = '_';
-                wordContainer.appendChild(letter);
-            }
-        }
-
-        document.addEventListener('keypress', (event) => {
-            if (!currentWord) return;
-            
-            const key = event.key.toLowerCase();
             const letters = document.querySelectorAll('.letter');
             
             if (currentPosition < currentWord.length) {
@@ -195,6 +185,46 @@
                     }, 500);
                 }
             }
+        }
+
+        function handleSpecialChar(char) {
+            if (!currentWord) return;
+            handleKey(char);
+        }
+
+        function selectNewNumber() {
+            document.querySelector('.success').textContent = '';
+            currentNumber = Math.floor(Math.random() * 100) + 1;
+            currentWord = getGermanNumber(currentNumber);
+            currentPosition = 0;
+            
+            const numberElement = document.querySelector('.number');
+            numberElement.textContent = currentNumber;
+            
+            const wordContainer = document.querySelector('.word-container');
+            wordContainer.innerHTML = '';
+            
+            for (let i = 0; i < currentWord.length; i++) {
+                const letter = document.createElement('span');
+                letter.classList.add('letter');
+                letter.textContent = '_';
+                wordContainer.appendChild(letter);
+            }
+
+            // Focus the input for mobile
+            mobileInput.focus();
+        }
+
+        function getGermanNumber(num) {
+            if (num <= 20) return germanNumbers[num];
+            if (num % 10 === 0) return germanNumbers[num];
+            const ones = num % 10;
+            const tens = Math.floor(num / 10) * 10;
+            return germanNumbers[ones] + 'und' + germanNumbers[tens];
+        }
+
+        document.addEventListener('keypress', (event) => {
+            handleKey(event.key.toLowerCase());
         });
 
         // Start the game
