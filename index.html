@@ -167,40 +167,41 @@
             mobileInput.focus();
         });
 
-        // Handle mobile input
-        mobileInput.addEventListener('input', (event) => {
-            const key = event.target.value.toLowerCase();
-            // Only process non-empty input
+        // Handle mobile input using beforeinput event instead
+        mobileInput.addEventListener('beforeinput', (event) => {
+            const key = event.data;
             if (key) {
-                handleKey(key);
+                handleKey(key.toLowerCase());
             }
-            event.target.value = ''; // Clear the input for next letter
         });
 
         function handleKey(key) {
-            if (!currentWord) return;
+            if (!currentWord || currentPosition >= currentWord.length) return;
             
             const letters = document.querySelectorAll('.letter');
             
-            if (currentPosition < currentWord.length) {
-                if (key === currentWord[currentPosition].toLowerCase()) {
-                    letters[currentPosition].textContent = currentWord[currentPosition];
-                    letters[currentPosition].style.color = '#22c55e';
-                    currentPosition++;
-                    
-                    if (currentPosition === currentWord.length) {
-                        document.querySelector('.success').textContent = '✓';
-                        setTimeout(selectNewNumber, 1500);
-                    }
-                } else if (key !== '') { // Only show X for non-empty input
-                    letters[currentPosition].textContent = '❌';
-                    letters[currentPosition].style.color = '#ef4444';
-                    setTimeout(() => {
-                        letters[currentPosition].textContent = '_';
-                        letters[currentPosition].style.color = 'black';
-                    }, 500);
+            if (key === currentWord[currentPosition].toLowerCase()) {
+                letters[currentPosition].textContent = currentWord[currentPosition];
+                letters[currentPosition].style.color = '#22c55e';
+                currentPosition++;
+                
+                if (currentPosition === currentWord.length) {
+                    document.querySelector('.success').textContent = '✓';
+                    setTimeout(selectNewNumber, 1500);
                 }
+            } else {
+                letters[currentPosition].textContent = '❌';
+                letters[currentPosition].style.color = '#ef4444';
+                setTimeout(() => {
+                    letters[currentPosition].textContent = '_';
+                    letters[currentPosition].style.color = 'black';
+                }, 500);
             }
+            
+            // Clear the input after processing the key
+            requestAnimationFrame(() => {
+                mobileInput.value = '';
+            });
         }
 
         function handleSpecialChar(char) {
