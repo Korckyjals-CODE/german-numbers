@@ -35,9 +35,15 @@
     }
     .special-chars {
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
-        order: 2; /* Ensures that the special characters come after the word */
+        order: 2; /* Places the special characters after the word */
         margin-top: 20px;
+    }
+    .special-char-btn {
+        flex: 1 1 50px; /* Makes buttons fit in a row, but they can shrink */
+        max-width: 60px; /* Limits the maximum width of each button */
+        margin: 5px;
     }
     .word-container {
         order: 1; /* Keeps the word container above the special characters */
