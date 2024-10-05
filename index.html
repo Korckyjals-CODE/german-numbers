@@ -107,11 +107,10 @@
             color: #ef4444;
         }
         .mobile-input {
-            opacity: 0;
             position: fixed;
-            width: 1px;
-            height: 1px;
-            pointer-events: none;
+            left: -9999px;
+            width: 100px;
+            height: 100px;
         }
         .keyboard-hint {
             background-color: #e0e7ff;
@@ -145,7 +144,7 @@
             <div class="success"></div>
         </div>
     </div>
-    <input type="text" class="mobile-input" autocomplete="off" />
+    <textarea class="mobile-input" autocomplete="off"></textarea>
 
     <script>
         const germanNumbers = {
@@ -161,23 +160,40 @@
         let currentWord;
         let currentPosition;
         const mobileInput = document.querySelector('.mobile-input');
+        let processingKey = false;
 
         // Make the whole game area focusable for mobile
         document.querySelector('.game-area').addEventListener('click', () => {
             mobileInput.focus();
         });
 
-        // Handle mobile input using beforeinput event instead
-        mobileInput.addEventListener('beforeinput', (event) => {
-            const key = event.data;
-            if (key) {
-                handleKey(key.toLowerCase());
+        // New input handling approach
+        mobileInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                return;
             }
         });
 
-        function handleKey(key) {
-            if (!currentWord || currentPosition >= currentWord.length) return;
+        let lastLength = 0;
+        mobileInput.addEventListener('input', function(event) {
+            const currentLength = this.value.length;
             
+            if (currentLength > lastLength) {
+                // New character was added
+                const newChar = this.value.charAt(currentLength - 1);
+                handleKey(newChar.toLowerCase());
+            }
+            
+            // Clear the textarea
+            this.value = '';
+            lastLength = 0;
+        });
+
+        function handleKey(key) {
+            if (!currentWord || currentPosition >= currentWord.length || processingKey) return;
+            
+            processingKey = true;
             const letters = document.querySelectorAll('.letter');
             
             if (key === currentWord[currentPosition].toLowerCase()) {
@@ -198,10 +214,9 @@
                 }, 500);
             }
             
-            // Clear the input after processing the key
-            requestAnimationFrame(() => {
-                mobileInput.value = '';
-            });
+            setTimeout(() => {
+                processingKey = false;
+            }, 50);
         }
 
         function handleSpecialChar(char) {
