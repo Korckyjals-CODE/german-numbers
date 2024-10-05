@@ -30,23 +30,23 @@
             gap: 20px;
         }
         @media (max-width: 600px) {
-    .special-chars {
-        display: flex;
-        flex-wrap: nowrap; /* Prevents wrapping to a new row */
-        justify-content: center; /* Aligns the buttons in the center */
-        order: 2; /* Ensure special characters are after the word */
-        gap: 5px; /* Adds space between buttons */
-        overflow-x: auto; /* Allows horizontal scrolling if needed */
+        .special-chars {
+            display: flex;
+            flex-wrap: nowrap; /* Keeps the buttons in one row */
+            justify-content: space-between; /* Spreads the buttons evenly across the container */
+            padding: 0; /* Removes padding to avoid extra space */
+            margin: 0; /* Removes margin to avoid extra space */
+            width: 100%; /* Makes sure the container takes the full width of the screen */
+        }
+        .special-char-btn {
+            flex: 1 1 auto; /* Allows buttons to resize as needed */
+            width: 50px; /* Fixed button width */
+            margin: 0 2px; /* Small space between buttons */
+        }
+        .word-container {
+            order: 1; /* Keeps word container above special characters */
+        }
     }
-    .special-char-btn {
-        flex: 0 0 auto; /* Prevents shrinking, ensures buttons stay their width */
-        width: 50px; /* Fixes the button width */
-        margin: 0 5px; /* Adds small margins to the sides */
-    }
-    .word-container {
-        order: 1; /* Keeps word container above special characters */
-    }
-}
         .special-chars {
             display: flex;
             flex-direction: column;
