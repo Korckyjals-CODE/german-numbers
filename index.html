@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
+    <meta charset="UTF-8">
     <title>Learn German Numbers</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Add Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
@@ -20,38 +20,20 @@
         h1 {
             font-weight: 600;
         }
-        /* Rest of the CSS remains the same */
         .game-container {
             background-color: white;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             display: flex;
+            flex-direction: column;
             gap: 20px;
         }
-        @media (max-width: 600px) {
         .special-chars {
             display: flex;
-            flex-wrap: nowrap; /* Keeps the buttons in one row */
-            justify-content: space-between; /* Spreads the buttons evenly across the container */
-            padding: 0; /* Removes padding to avoid extra space */
-            margin: 0; /* Removes margin to avoid extra space */
-            width: 100%; /* Makes sure the container takes the full width of the screen */
-        }
-        .special-char-btn {
-            flex: 1 1 auto; /* Allows buttons to resize as needed */
-            width: 50px; /* Fixed button width */
-            margin: 0 2px; /* Small space between buttons */
-        }
-        .word-container {
-            order: 1; /* Keeps word container above special characters */
-        }
-    }
-        .special-chars {
-            display: flex;
-            flex-direction: column;
+            justify-content: center;
             gap: 10px;
-            padding: 20px;
+            padding: 10px;
             background-color: #f8fafc;
             border-radius: 10px;
         }
@@ -60,10 +42,10 @@
             border: 2px solid #818cf8;
             border-radius: 8px;
             padding: 8px;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.2s;
-            min-width: 50px;
+            min-width: 40px;
             font-family: 'Quicksand', sans-serif;
         }
         .special-char-btn:hover {
@@ -82,13 +64,13 @@
         }
         .word-container {
             margin: 20px 0;
-            letter-spacing: 8px;
-            font-size: 32px;
+            letter-spacing: 4px;
+            font-size: 28px;
             min-height: 50px;
         }
         .letter {
             display: inline-block;
-            width: 30px;
+            width: 25px;
             border-bottom: 2px solid #2563eb;
             margin: 0 2px;
         }
@@ -132,17 +114,18 @@
             .keyboard-hint {
                 display: block;
             }
+            .word-container {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            .letter {
+                width: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div class="special-chars">
-            <button class="special-char-btn" onclick="handleSpecialChar('ä')">ä</button>
-            <button class="special-char-btn" onclick="handleSpecialChar('ö')">ö</button>
-            <button class="special-char-btn" onclick="handleSpecialChar('ü')">ü</button>
-            <button class="special-char-btn" onclick="handleSpecialChar('ß')">ß</button>
-        </div>
         <div class="game-area">
             <h1>Learn German Numbers!</h1>
             <p>Type the letters or use the special character buttons to spell the number in German</p>
@@ -151,6 +134,12 @@
             <div class="word-container"></div>
             <button class="new-number-btn" onclick="selectNewNumber()">New Number</button>
             <div class="success"></div>
+        </div>
+        <div class="special-chars">
+            <button class="special-char-btn" onclick="handleSpecialChar('ä')">ä</button>
+            <button class="special-char-btn" onclick="handleSpecialChar('ö')">ö</button>
+            <button class="special-char-btn" onclick="handleSpecialChar('ü')">ü</button>
+            <button class="special-char-btn" onclick="handleSpecialChar('ß')">ß</button>
         </div>
     </div>
     <textarea class="mobile-input" autocomplete="off"></textarea>
@@ -171,12 +160,10 @@
         const mobileInput = document.querySelector('.mobile-input');
         let processingKey = false;
 
-        // Make the whole game area focusable for mobile
         document.querySelector('.game-area').addEventListener('click', () => {
             mobileInput.focus();
         });
 
-        // New input handling approach
         mobileInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -189,48 +176,42 @@
             const currentLength = this.value.length;
             
             if (currentLength > lastLength) {
-                // New character was added
                 const newChar = this.value.charAt(currentLength - 1);
                 handleKey(newChar.toLowerCase());
             }
             
-            // Clear the textarea
             this.value = '';
             lastLength = 0;
         });
 
         function handleKey(key) {
-    if (!currentWord || currentPosition >= currentWord.length || processingKey) return;
+            if (!currentWord || currentPosition >= currentWord.length || processingKey) return;
 
-    processingKey = true;
-    const letters = document.querySelectorAll('.letter');
+            processingKey = true;
+            const letters = document.querySelectorAll('.letter');
 
-    // Only process if the key is within the expected range of characters
-    if (key === currentWord[currentPosition].toLowerCase()) {
-        letters[currentPosition].textContent = currentWord[currentPosition];
-        letters[currentPosition].style.color = '#22c55e'; // Green for correct
-        currentPosition++;
+            if (key === currentWord[currentPosition].toLowerCase()) {
+                letters[currentPosition].textContent = currentWord[currentPosition];
+                letters[currentPosition].style.color = '#22c55e';
+                currentPosition++;
 
-        // Check if the word is complete
-        if (currentPosition === currentWord.length) {
-            document.querySelector('.success').textContent = '✓';
-            setTimeout(selectNewNumber, 1500); // Show success and load next number
+                if (currentPosition === currentWord.length) {
+                    document.querySelector('.success').textContent = '✓';
+                    setTimeout(selectNewNumber, 1500);
+                }
+            } else {
+                letters[currentPosition].textContent = '❌';
+                letters[currentPosition].style.color = '#ef4444';
+                setTimeout(() => {
+                    letters[currentPosition].textContent = '_';
+                    letters[currentPosition].style.color = 'black';
+                }, 500);
+            }
+
+            setTimeout(() => {
+                processingKey = false;
+            }, 100);
         }
-    } else {
-        // Mark the current letter position with a temporary error
-        letters[currentPosition].textContent = '❌';
-        letters[currentPosition].style.color = '#ef4444'; // Red for error
-        setTimeout(() => {
-            letters[currentPosition].textContent = '_'; // Reset after showing the error
-            letters[currentPosition].style.color = 'black';
-        }, 500);
-    }
-
-    // Reset the key processing flag after a slight delay to avoid false multiple inputs
-    setTimeout(() => {
-        processingKey = false;
-    }, 100); // Increased time to ensure processing completes
-}
 
         function handleSpecialChar(char) {
             if (!currentWord) return;
@@ -256,7 +237,6 @@
                 wordContainer.appendChild(letter);
             }
 
-            // Focus the input for mobile
             mobileInput.focus();
         }
 
@@ -272,7 +252,6 @@
             handleKey(event.key.toLowerCase());
         });
 
-        // Start the game
         selectNewNumber();
     </script>
 </body>
