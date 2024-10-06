@@ -110,6 +110,19 @@
             margin: 10px 0;
             display: none;
         }
+        .score {
+            font-size: 18px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .score-correct {
+            color: #22c55e;
+        }
+        .score-incorrect {
+            color: #ef4444;
+        }
         @media (max-width: 600px) {
             .keyboard-hint {
                 display: block;
@@ -134,6 +147,10 @@
             <div class="word-container"></div>
             <button class="new-number-btn" onclick="selectNewNumber()">New Number</button>
             <div class="success"></div>
+            <div class="score">
+                <span class="score-correct">Correct: <span id="correct-count">0</span></span>
+                <span class="score-incorrect">Incorrect: <span id="incorrect-count">0</span></span>
+            </div>
         </div>
         <div class="special-chars">
             <button class="special-char-btn" onclick="handleSpecialChar('ä')">ä</button>
@@ -159,6 +176,8 @@
         let currentPosition;
         const mobileInput = document.querySelector('.mobile-input');
         let processingKey = false;
+        let correctCount = 0;
+        let incorrectCount = 0;
 
         document.querySelector('.game-area').addEventListener('click', () => {
             mobileInput.focus();
@@ -194,6 +213,8 @@
                 letters[currentPosition].textContent = currentWord[currentPosition];
                 letters[currentPosition].style.color = '#22c55e';
                 currentPosition++;
+                correctCount++;
+                updateScore();
 
                 if (currentPosition === currentWord.length) {
                     document.querySelector('.success').textContent = '✓';
@@ -202,6 +223,8 @@
             } else {
                 letters[currentPosition].textContent = '❌';
                 letters[currentPosition].style.color = '#ef4444';
+                incorrectCount++;
+                updateScore();
                 setTimeout(() => {
                     letters[currentPosition].textContent = '_';
                     letters[currentPosition].style.color = 'black';
@@ -246,6 +269,11 @@
             const ones = num % 10;
             const tens = Math.floor(num / 10) * 10;
             return germanNumbers[ones] + 'und' + germanNumbers[tens];
+        }
+
+        function updateScore() {
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
         }
 
         document.addEventListener('keypress', (event) => {
