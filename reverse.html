@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Learn German Numbers - Reverse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', 'Comic Sans MS', 'Helvetica Neue', sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+            background-color: #f0f9ff;
+            padding: 10px;
+            font-weight: 400;
+        }
+        h1 {
+            font-weight: 600;
+        }
+        .game-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .game-area {
+            flex-grow: 1;
+        }
+        .number-word {
+            font-size: 36px;
+            margin: 20px 0;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .input-container {
+            margin: 20px 0;
+        }
+        #number-input {
+            font-size: 24px;
+            padding: 10px;
+            width: 100px;
+            text-align: center;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+        }
+        .new-word-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+        }
+        .new-word-btn:hover {
+            background-color: #1d4ed8;
+        }
+        .feedback {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .correct {
+            color: #22c55e;
+        }
+        .incorrect {
+            color: #ef4444;
+        }
+        .score {
+            font-size: 18px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .score-correct {
+            color: #22c55e;
+        }
+        .score-incorrect {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-area">
+            <h1>Learn German Numbers - Reverse!</h1>
+            <p>Type the numeric digits for the German number word shown</p>
+            <div class="number-word"></div>
+            <div class="input-container">
+                <input type="number" id="number-input" min="1" max="100" placeholder="?">
+            </div>
+            <button class="new-word-btn" onclick="selectNewWord()">New Word</button>
+            <div class="feedback"></div>
+            <div class="score">
+                <span class="score-correct">Correct: <span id="correct-count">0</span></span>
+                <span class="score-incorrect">Incorrect: <span id="incorrect-count">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const germanNumbers = {
+            1: 'eins', 2: 'zwei', 3: 'drei', 4: 'vier', 5: 'fünf',
+            6: 'sechs', 7: 'sieben', 8: 'acht', 9: 'neun', 10: 'zehn',
+            11: 'elf', 12: 'zwölf', 13: 'dreizehn', 14: 'vierzehn', 15: 'fünfzehn',
+            16: 'sechzehn', 17: 'siebzehn', 18: 'achtzehn', 19: 'neunzehn', 20: 'zwanzig',
+            30: 'dreißig', 40: 'vierzig', 50: 'fünfzig', 60: 'sechzig',
+            70: 'siebzig', 80: 'achtzig', 90: 'neunzig', 100: 'hundert'
+        };
+
+        let currentNumber;
+        let correctCount = 0;
+        let incorrectCount = 0;
+
+        function getGermanNumber(num) {
+            if (num <= 20) return germanNumbers[num];
+            if (num === 100) return germanNumbers[100];
+            if (num % 10 === 0) return germanNumbers[num];
+            
+            const ones = num % 10;
+            const tens = Math.floor(num / 10) * 10;
+            
+            if (ones === 1) {
+                return 'einund' + germanNumbers[tens];
+            } else {
+                return germanNumbers[ones] + 'und' + germanNumbers[tens];
+            }
+        }
+
+        function selectNewWord() {
+            currentNumber = Math.floor(Math.random() * 100) + 1;
+            const numberWord = getGermanNumber(currentNumber);
+            document.querySelector('.number-word').textContent = numberWord;
+            document.getElementById('number-input').value = '';
+            document.querySelector('.feedback').textContent = '';
+            document.getElementById('number-input').focus();
+        }
+
+        function checkAnswer() {
+            const userInput = parseInt(document.getElementById('number-input').value);
+            const feedbackElement = document.querySelector('.feedback');
+            
+            if (userInput === currentNumber) {
+                feedbackElement.textContent = '✓ Correct!';
+                feedbackElement.className = 'feedback correct';
+                correctCount++;
+            } else {
+                feedbackElement.textContent = `✗ Incorrect. The correct number is ${currentNumber}.`;
+                feedbackElement.className = 'feedback incorrect';
+                incorrectCount++;
+            }
+            
+            updateScore();
+            setTimeout(selectNewWord, 2000);
+        }
+
+        function updateScore() {
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        document.getElementById('number-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        selectNewWord();
+    </script>
+</body>
+</html>
