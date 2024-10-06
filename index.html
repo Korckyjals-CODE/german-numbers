@@ -265,6 +265,7 @@
 
         function getGermanNumber(num) {
             if (num <= 20) return germanNumbers[num];
+            if (num === 100) return germanNumbers[100];
             if (num % 10 === 0) return germanNumbers[num];
             
             const ones = num % 10;
