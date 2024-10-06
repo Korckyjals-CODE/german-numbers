@@ -266,9 +266,15 @@
         function getGermanNumber(num) {
             if (num <= 20) return germanNumbers[num];
             if (num % 10 === 0) return germanNumbers[num];
+            
             const ones = num % 10;
             const tens = Math.floor(num / 10) * 10;
-            return germanNumbers[ones] + 'und' + germanNumbers[tens];
+            
+            if (ones === 1) {
+                return 'ein' + 'und' + germanNumbers[tens];
+            } else {
+                return germanNumbers[ones] + 'und' + germanNumbers[tens];
+            }
         }
 
         function updateScore() {
